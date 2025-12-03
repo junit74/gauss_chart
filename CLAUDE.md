@@ -21,6 +21,14 @@ streamlit run app.py
 pip install -r requirements.txt
 ```
 
+## API Key Configuration
+
+The app uses Google Gemini API. API key is loaded in this priority:
+1. `st.secrets["GEMINI_API_KEY"]` (Streamlit Cloud)
+2. `GEMINI_API_KEY` environment variable (local `.env` file)
+
+For local development, copy `.env.example` to `.env` and add your key.
+
 ## Architecture
 
 Single-file application (`app.py`) with three main components:
