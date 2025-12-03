@@ -19,8 +19,11 @@ from google import genai
 from google.genai import types
 from PIL import Image
 
-# Get API key from environment variable
-api_key = os.getenv('GEMINI_API_KEY', '')
+# Get API key from Streamlit secrets or environment variable
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+except (KeyError, FileNotFoundError):
+    api_key = os.getenv('GEMINI_API_KEY', '')
 
 # Page configuration
 st.set_page_config(
