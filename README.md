@@ -40,12 +40,21 @@ cp .env.example .env
 
 ## Configuration
 
+### Local Development
+
 Create a `.env` file in the project root:
 ```
 GEMINI_API_KEY=your_api_key_here
 ```
 
 Get your API key from [Google AI Studio](https://aistudio.google.com/apikey).
+
+### Streamlit Cloud
+
+When deploying to Streamlit Cloud, add your API key in the app's Secrets settings:
+```toml
+GEMINI_API_KEY = "your_api_key_here"
+```
 
 ## Usage
 
@@ -62,6 +71,17 @@ streamlit run app.py
 ```
 
 The app will open in your browser at `http://localhost:8501`.
+
+## Deployment
+
+### Streamlit Cloud
+
+1. Push your code to GitHub
+2. Go to [share.streamlit.io](https://share.streamlit.io)
+3. Click "New app" and select your repository
+4. Set `app.py` as the main file
+5. In Advanced settings → Secrets, add your `GEMINI_API_KEY`
+6. Click Deploy
 
 ## Data Structure
 
