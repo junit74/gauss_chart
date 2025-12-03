@@ -72,6 +72,72 @@ streamlit run app.py
 
 The app will open in your browser at `http://localhost:8501`.
 
+## Architecture
+
+### Image to Chart Generation Flow
+
+The app uses a **3-step pipeline** to convert a table image into charts:
+
+```
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│ Table Image │  →   │   Gemini    │  →   │    JSON     │
+│   (input)   │      │  (vision)   │      │   (text)    │
+└─────────────┘      └─────────────┘      └─────────────┘
+                                                 │
+                                                 ▼
+                                          ┌─────────────┐      ┌─────────────┐
+                                          │ matplotlib  │  →   │ Chart PNG   │
+                                          │  (local)    │      │  (output)   │
+                                          └─────────────┘      └─────────────┘
+```
+
+#### Step 1: Image Upload
+- User uploads a table image (PNG/JPG/JPEG) via Streamlit file uploader
+- The uploaded image is displayed for preview
+
+#### Step 2: Data Extraction via Gemini API
+- **Function**: `extract_data_from_image()`
+- Sends the image to Google Gemini 2.0 Flash with a detailed prompt
+- Gemini acts as "OCR with understanding" - reads the table and extracts numbers
+- Returns structured JSON with measurement values:
+  - `initial_n/s`: Initial Gauss readings
+  - `after_n/s`: Post-aging readings
+  - `change_n/s`: Absolute change
+  - `percent_n/s`: Percentage change
+
+#### Step 3: Chart Generation (Local)
+- **Function**: `create_charts()`
+- Charts are rendered locally using matplotlib (NOT by Gemini)
+- Creates a 2x2 figure with fixed layout and styling
+
+### Chart Layout (Fixed Pattern)
+
+The consistent 2x2 chart layout is hardcoded in `create_charts()`:
+
+| Position | Chart Type |
+|----------|------------|
+| Top-left | N Pole: Initial vs After |
+| Top-right | S Pole: Initial vs After |
+| Bottom-left | Absolute Change (N vs S) |
+| Bottom-right | Percentage Change (N vs S) |
+
+#### Fixed Visual Elements
+- **Colors**: Blue (`#4a8bc2`) for N pole, Purple (`#9c4a7c`) for S pole
+- **Y-axis limits**: 0-2000 for Gauss charts
+- **Reference lines**: 100 Gauss threshold, 10% threshold
+- **Figure size**: 14x10 inches
+
+The chart **template is static** (positions, colors, titles, axis settings). Only the **bar heights change** based on extracted/input data. This ensures visual consistency regardless of the source image content.
+
+### Component Responsibilities
+
+| Task | Tool Used |
+|------|-----------|
+| Extract data from image | Google Gemini API (Vision AI) |
+| Generate charts | matplotlib (local Python) |
+| Web interface | Streamlit |
+| Data display | pandas DataFrame |
+
 ## Deployment
 
 ### Streamlit Cloud
