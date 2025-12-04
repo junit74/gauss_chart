@@ -120,6 +120,15 @@ def create_charts(data):
     x = np.arange(len(labels))
     width = 0.35
 
+    # Calculate max Gauss value from data for Y-axis limit
+    all_gauss_values = []
+    for k in labels:
+        all_gauss_values.extend([
+            data[k]["initial_n"], data[k]["initial_s"],
+            data[k]["after_n"], data[k]["after_s"]
+        ])
+    max_gauss = max(all_gauss_values) * 1.1  # Add 10% padding
+
     # Color settings
     initial_color = '#4a8bc2'
     after_color = '#2d5f8a'
@@ -139,7 +148,7 @@ def create_charts(data):
     ax1.set_xticks(x)
     ax1.set_xticklabels(x_labels)
     ax1.legend()
-    ax1.set_ylim(0, 2000)
+    ax1.set_ylim(0, max_gauss)
 
     # Display values
     for bar in bars1:
@@ -164,7 +173,7 @@ def create_charts(data):
     ax2.set_xticks(x)
     ax2.set_xticklabels(x_labels)
     ax2.legend()
-    ax2.set_ylim(0, 2000)
+    ax2.set_ylim(0, max_gauss)
 
     # Display values
     for bar in bars3:
